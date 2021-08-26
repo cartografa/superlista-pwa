@@ -1,6 +1,6 @@
-/*------------------------------------*/
-/*         VARIABLES GLOBALES         */
-/*------------------------------------*/
+/*-------------------------------------------------*/
+/*               VARIABLES GLOBALES                */
+/*-------------------------------------------------*/
 
 let listaProductos = [
     { nombre: 'Aceite de Oliva', cantidad: 1, precio: 280.00 },
@@ -12,14 +12,14 @@ let listaProductos = [
 let crearLista = true
 let ul
 
-/*------------------------------------*/
-/*          FUNCIONES GLOBALES        */
-/*------------------------------------*/
+/*------------------------------------------------*/
+/*                FUNCIONES GLOBALES              */
+/*------------------------------------------------*/
 
 function borrarProd(index) {
     console.log('borrarProd', index)
 
-    listaProductos.splice(index, 1) 
+    listaProductos.splice(index, 1)
     renderLista()
 }
 
@@ -38,9 +38,9 @@ function borrarProd(index) {
 
 function cambiarValor(tipo, index, el) {
     let valor = el.value
-    valor = tipo == 'precio'? Number(valor) : parseInt(valor)
+    valor = tipo == 'precio' ? Number(valor) : parseInt(valor)
 
-    console.log('cambiarValor', tipo, index, el)
+    console.log('cambiarValor', tipo, index, valor)
     listaProductos[index][tipo] = valor
 }
 
@@ -52,61 +52,66 @@ function renderLista() {
         ul.classList.add('demo-list-icon', 'mdl-list', 'w-100');
     }
 
+    ul.innerHTML = ''
 
-    listaProductos.forEach( (prod, index) => {
-        console.log(prod)
-        ul.innerHTML =
-            `<li class="mdl-list__item">
+    listaProductos.forEach((prod, index) => {
+        console.log(index, prod)
+        ul.innerHTML +=
+            `
+            <li class="mdl-list__item">
 
-            <!-- Ícono del producto -->
-            <span class="mdl-list__item-primary-content w-10">
-                <i class="material-icons mdl-list__item-icon">shopping_cart</i>
-            </span>
+                <!-- Ícono del producto -->
+                <span class="mdl-list__item-primary-content w-10">
+                    <i class="material-icons mdl-list__item-icon">shopping_cart</i>
+                </span>
 
-            <!-- Nombre del producto -->
-            <span class="mdl-list__item-primary-content w-30">
-                ${prod.nombre}
-            </span>
+                <!-- Nombre del producto -->
+                <span class="mdl-list__item-primary-content w-30">
+                    ${prod.nombre}
+                </span>
 
-            <!-- Cantidad del producto -->
-            <span class="mdl-list__item-primary-content w-20 ml-item">
-                <!-- Textfield with Floating Label -->
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input onchange="cambiarValor('cantidad', ${index}, this)" value="${prod.cantidad}" class="mdl-textfield__input" type="text" id="cantidad-${index}">
-                    <label class="mdl-textfield__label" for="cantidad-${index}">Cantidad</label>
-                </div>
-            </span>
+                <!-- Cantidad del producto -->
+                <span class="mdl-list__item-primary-content w-20">
+                    <!-- Textfield with Floating Label -->
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input onchange="cambiarValor('cantidad', ${index}, this)" value="${prod.cantidad}" class="mdl-textfield__input" type="text" id="cantidad-${index}">
+                        <label class="mdl-textfield__label" for="cantidad-${index}">Cantidad</label>
+                    </div>
+                </span>
 
-            <!-- Precio del producto -->
-            <span class="mdl-list__item-primary-content w-20 ml-item">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input onchange="cambiarValor('precio', ${index}, this) value="${prod.precio}" class="mdl-textfield__input" type="text" id="precio-${index}">
-                    <label class="mdl-textfield__label" for="precio-${index}">Precio($)</label>
-                </div>
-            </span>
+                <!-- Precio del producto -->
+                <span class="mdl-list__item-primary-content w-20 ml-item">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input onchange="cambiarValor('precio', ${index}, this) value="${prod.precio}" class="mdl-textfield__input" type="text" id="precio-${index}">
+                        <label class="mdl-textfield__label" for="precio-${index}">Precio($)</label>
+                    </div>
+                </span>
 
-            <!-- Acción (eliminar) -->
-            <span class="mdl-list__item-primary-content w-20">
-                <!-- Colored FAB button with ripple -->
-                <button onclick="borrarProd()"
-                    class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-                    <i class="material-icons">remove_shopping_cart</i>
-                </button>
-            </span>
-        </li>`
+                <!-- Acción (eliminar) -->
+                <span class="mdl-list__item-primary-content w-20 ml-item">
+                    <!-- Colored FAB button with ripple -->
+                    <button onclick="borrarProd(${index})"
+                        class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                        <i class="material-icons">remove_shopping_cart</i>
+                    </button>
+                </span>
 
-        
+            </li>
+            `
     })
 
     if (crearLista) {
         document.getElementById('lista').appendChild(ul)
+    }
+    else {
+        componentHandler.upgradeElements(ul)
     }
 
     crearLista = false
 }
 
 function configurarListeners() {
-    // Ingrese de un producto nuevo
+    // Ingreso de un producto nuevo
     document.getElementById('btn-entrada-producto').addEventListener('click', () => {
         console.log('btn-entrada-producto')
 
@@ -114,17 +119,18 @@ function configurarListeners() {
         let producto = input.value
         console.log(producto)
 
-        if(producto) {
-            listaProductos.push( { nombre : producto, 
-                                   cantidad : 1,
-                                   precio: 0 
-                                } )
+        if (producto) {
+            listaProductos.push({
+                nombre: producto,
+                cantidad: 1,
+                precio: 0
+            })
             renderLista()
             input.value = null
         }
     })
 
-    // Borrado del producto
+    // Borrado total de productos
     document.getElementById('btn-borrar-productos').addEventListener('click', () => {
         console.log('btn-borrar-productos')
 
@@ -136,7 +142,7 @@ function configurarListeners() {
 }
 
 function start() {
-    console.log(document.querySelector('title'))
+    console.log(document.querySelector('title').textContent)
 
     configurarListeners()
     renderLista()
