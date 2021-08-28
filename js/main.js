@@ -141,9 +141,26 @@ function configurarListeners() {
     })
 }
 
+function registrarSW() {
+    if ('serviceWorker' in navigator) {
+        // window.addEventListener('load', () => {
+            this.navigator.serviceWorker.register('./sw.js') //devuelve una promesa
+            .then (reg => {
+                console.log('El SW se registró correctamente: ', reg)
+            })
+            .catch (err => {
+                console.error('Error al registrar el SW')
+            })
+        // })
+    } else {
+        console.error('serviceWorker no está disponible en navigator')
+    }
+}
+
 function start() {
     console.log(document.querySelector('title').textContent)
 
+    registrarSW()
     configurarListeners()
     renderLista()
 }
