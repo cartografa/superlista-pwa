@@ -8,7 +8,6 @@ let listaProductos = [
     { nombre: 'Tomates secos', cantidad: 50, precio: 120.00 }
 ]
 
-
 let crearLista = true
 let ul
 
@@ -141,7 +140,7 @@ function configurarListeners() {
     })
 }
 
-function registrarSW() {
+function registrarServiceWorker() {
     if ('serviceWorker' in navigator) {
         // window.addEventListener('load', () => {
             this.navigator.serviceWorker.register('./sw.js') //devuelve una promesa
@@ -149,10 +148,11 @@ function registrarSW() {
                 console.log('El SW se registró correctamente: ', reg)
             })
             .catch (err => {
-                console.error('Error al registrar el SW')
+                console.error('Error al registrar el SW', err)
             })
         // })
-    } else {
+    } 
+    else {
         console.error('serviceWorker no está disponible en navigator')
     }
 }
@@ -160,7 +160,7 @@ function registrarSW() {
 function start() {
     console.log(document.querySelector('title').textContent)
 
-    registrarSW()
+    registrarServiceWorker()
     configurarListeners()
     renderLista()
 }
