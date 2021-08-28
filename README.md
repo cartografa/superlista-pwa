@@ -1,1 +1,1 @@
-# superlista-pwa
+# Super-Lista (Progressive Web App)
