@@ -1,9 +1,0 @@
-- Documentación Manifest (Manifiesto) - 
-https://developer.mozilla.org/es/docs/Web/Manifest
-https://developers.google.com/web/fundamentals/web-app-manifest/?hl=es
-
-
-- Generador online de archivo Manifest (manifest.json)
-https://manifest-gen.netlify.app/
-
-- glitch.com

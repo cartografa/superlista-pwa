@@ -9,7 +9,7 @@
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#8BC34A"/>
+    <meta name="theme-color" content="#8BC34A" />
     <link rel="apple-touch-icon" href="./images/icons/icon-192x192.png">
 
     <!-- Material Design Lite -->
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_green-deep_orange.min.css" />
 
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="icon" href="./images/icons/favicon.ico"> 
+    <link rel="icon" href="./images/icons/favicon.ico">
 </head>
 
 <body>
@@ -53,6 +53,26 @@
         <main class="mdl-layout__content">
             <div class="page-content">
 
+                <!-- LOGO IMAGEN -->
+                <div>
+                    <img class="hero--img" src="./images/groceries.jpg" alt="logo">
+                </div>
+
+                <!-- MODAL DIALOG (borrar todo) -->
+                <dialog class="mdl-dialog">
+                    <h5 class="mdl-dialog__title">¿Borrar todo?</h5>
+                    <br>
+                    <!-- <div class="mdl-dialog__content">
+                        <p>
+                        </p>
+                    </div> -->
+                    <div class="mdl-dialog__actions">
+                        <button type="button" class="mdl-button aceptar">Aceptar</button>
+                        <button type="button" class="mdl-button close">Cancelar</button>
+                    </div>
+                </dialog>
+
+                <!-- MENU -->
                 <div class="contenedor">
                     <!-- Campo para el ingreso del nombre de nuevo producto -->
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label w-40">
@@ -85,8 +105,8 @@
         </main>
     </div>
 
-        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-        <script src="./js/main.js"></script>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="./js/main.js"></script>
 </body>
 
 </html>

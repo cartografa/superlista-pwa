@@ -54,7 +54,7 @@ function renderLista() {
     ul.innerHTML = ''
 
     listaProductos.forEach((prod, index) => {
-        console.log(index, prod)
+        // console.log(index, prod)
         ul.innerHTML +=
             `
             <li class="mdl-list__item">
@@ -133,10 +133,11 @@ function configurarListeners() {
     document.getElementById('btn-borrar-productos').addEventListener('click', () => {
         console.log('btn-borrar-productos')
 
-        if (confirm('¿Desea borrar todos los productos?')) {
-            listaProductos = []
-            renderLista()
+        if(listaProductos.length) {
+            var dialog = document.querySelector('dialog');
+            dialog.showModal();
         }
+        
     })
 }
 
@@ -145,7 +146,7 @@ function registrarServiceWorker() {
         // window.addEventListener('load', () => {
             this.navigator.serviceWorker.register('./sw.js') //devuelve una promesa
             .then (reg => {
-                console.log('El SW se registró correctamente: ', reg)
+                // console.log('El SW se registró correctamente: ', reg)
             })
             .catch (err => {
                 console.error('Error al registrar el SW', err)
@@ -157,11 +158,30 @@ function registrarServiceWorker() {
     }
 }
 
+function initDialog() {
+    var dialog = document.querySelector('dialog');
+    if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+
+    dialog.querySelector('.close').addEventListener('click', function () {
+        dialog.close();
+    });
+
+    dialog.querySelector('.aceptar').addEventListener('click', function () {
+        listaProductos = []
+        renderLista()
+
+        dialog.close();
+    });
+}
+
 function start() {
-    console.log(document.querySelector('title').textContent)
+    // console.log(document.querySelector('title').textContent)
 
     registrarServiceWorker()
     configurarListeners()
+    initDialog()
     renderLista()
 }
 

@@ -28,3 +28,12 @@
     align-items: center;
 }
 
+.hero--img {
+    width: 100%;
+    max-width: 1800px;
+}
+
+.mdl-dialog__title {
+    font-size: 1.8rem;
+}
+
