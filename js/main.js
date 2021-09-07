@@ -3,9 +3,9 @@
 /*-------------------------------------------------*/
 
 let listaProductos = [
-    { nombre: 'Aceite de Oliva', cantidad: 1, precio: 280.00 },
-    { nombre: 'Fideos', cantidad: 2, precio: 95.00 },
-    { nombre: 'Tomates secos', cantidad: 50, precio: 120.00 }
+    // { nombre: 'Aceite de Oliva', cantidad: 1, precio: 280.00 },
+    // { nombre: 'Fideos', cantidad: 2, precio: 95.00 },
+    // { nombre: 'Tomates secos', cantidad: 50, precio: 120.00 }
 ]
 
 let crearLista = true
@@ -15,11 +15,17 @@ let ul
 /*                FUNCIONES GLOBALES              */
 /*------------------------------------------------*/
 
-function borrarProd(index) {
-    console.log('borrarProd', index)
+async function borrarProd(id) {
 
-    listaProductos.splice(index, 1)
-    renderLista()
+    console.log('borrarProd', id)
+
+    try {
+        await apiProd.del(id)
+        renderLista()
+    }
+    catch(error) {
+        console.error('Error en el borrado del producto con id:', id)
+    }
 }
 
 // function cambiarCantidad(index, el) {
@@ -35,106 +41,93 @@ function borrarProd(index) {
 //     listaProductos[index].precio = precio
 // }
 
-function cambiarValor(tipo, index, el) {
+async function cambiarValor(tipo, id, el) {
     let valor = el.value
     valor = tipo == 'precio' ? Number(valor) : parseInt(valor)
 
-    console.log('cambiarValor', tipo, index, valor)
+    // calculo el index al producto desde su id
+    let index = listaProductos.findIndex(prod => prod.id == id)
+
+    console.log('cambiarValor', tipo, id, valor)
+
     listaProductos[index][tipo] = valor
+
+    // actualizo producto en el backend
+    let prod = listaProductos[index]
+    try {
+        await apiProd.put(prod, id)
+    }
+    catch (error) {
+        console.error(`Error en actualización de ${tipo} del producto, ${error}`)
+    }
 }
 
-function renderLista() {
+async function renderLista() {
 
-    if (crearLista) {
-        ul = document.createElement('ul');
-        // <ul class="demo-list-icon mdl-list w-100"></ul>
-        ul.classList.add('demo-list-icon', 'mdl-list', 'w-100');
-    }
+    try {
+        // Leer la plantilla handlebars desde un archivo externo:
 
-    ul.innerHTML = ''
+        // con fetch ---->
+        // let datos = await fetch('./plantilla-lista.hbs')
+        // let plantilla = await datos.text()
 
-    listaProductos.forEach((prod, index) => {
-        // console.log(index, prod)
-        ul.innerHTML +=
-            `
-            <li class="mdl-list__item">
+        // con ajax de jquery ---->
+        let plantilla = await $.ajax({ url: './plantilla-lista.hbs' })
 
-                <!-- Ícono del producto -->
-                <span class="mdl-list__item-primary-content w-10">
-                    <i class="material-icons mdl-list__item-icon">shopping_cart</i>
-                </span>
+        // compilo la plantilla
+        let template = Handlebars.compile(plantilla)
 
-                <!-- Nombre del producto -->
-                <span class="mdl-list__item-primary-content w-30">
-                    ${prod.nombre}
-                </span>
+        // obtengo la lista productos de la api
+        listaProductos = await apiProd.get()
 
-                <!-- Cantidad del producto -->
-                <span class="mdl-list__item-primary-content w-20">
-                    <!-- Textfield with Floating Label -->
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input onchange="cambiarValor('cantidad', ${index}, this)" value="${prod.cantidad}" class="mdl-textfield__input" type="text" id="cantidad-${index}">
-                        <label class="mdl-textfield__label" for="cantidad-${index}">Cantidad</label>
-                    </div>
-                </span>
+        // ejecuto la plantilla compilada y la agrego a l
+        $('#lista').html( template ( { listaProductos: listaProductos } ) )
 
-                <!-- Precio del producto -->
-                <span class="mdl-list__item-primary-content w-20 ml-item">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input onchange="cambiarValor('precio', ${index}, this) value="${prod.precio}" class="mdl-textfield__input" type="text" id="precio-${index}">
-                        <label class="mdl-textfield__label" for="precio-${index}">Precio($)</label>
-                    </div>
-                </span>
-
-                <!-- Acción (eliminar) -->
-                <span class="mdl-list__item-primary-content w-20 ml-item">
-                    <!-- Colored FAB button with ripple -->
-                    <button onclick="borrarProd(${index})"
-                        class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-                        <i class="material-icons">remove_shopping_cart</i>
-                    </button>
-                </span>
-
-            </li>
-            `
-    })
-
-    if (crearLista) {
-        document.getElementById('lista').appendChild(ul)
-    }
-    else {
+        let ul = $('#contenedor-lista')
         componentHandler.upgradeElements(ul)
     }
-
-    crearLista = false
+    catch (error) {
+        console.error('Error en Handlebars', error)
+    }
 }
 
 function configurarListeners() {
     // Ingreso de un producto nuevo
-    document.getElementById('btn-entrada-producto').addEventListener('click', () => {
+    $('#btn-entrada-producto').click( async () => {
         console.log('btn-entrada-producto')
 
-        let input = document.getElementById('ingreso-producto')
-        let producto = input.value
-        console.log(producto)
+        let input = $('#ingreso-producto')
+        let nombre = input.val()
+        console.log(nombre)
 
-        if (producto) {
-            listaProductos.push({
-                nombre: producto,
-                cantidad: 1,
-                precio: 0
-            })
-            renderLista()
-            input.value = null
+        if (nombre) {
+            try {
+                // listaProductos.push({
+                //     nombre: producto,
+                //     cantidad: 1,
+                //     precio: 0
+                // })
+                let producto = { 
+                    nombre: nombre, 
+                    cantidad: 1, 
+                    precio: 0
+                }
+                await apiProd.post(producto)
+                renderLista()
+                input.val(null)
+            }
+            catch (error) {
+                console.error('Error en la entrada del producto', error)
+            }
         }
     })
 
     // Borrado total de productos
-    document.getElementById('btn-borrar-productos').addEventListener('click', () => {
+    $('#btn-borrar-productos').click( () => {
         console.log('btn-borrar-productos')
 
         if(listaProductos.length) {
-            var dialog = document.querySelector('dialog');
+            let dialog = $('dialog')[0];
             dialog.showModal();
         }
         
@@ -159,16 +152,16 @@ function registrarServiceWorker() {
 }
 
 function initDialog() {
-    var dialog = document.querySelector('dialog');
+    let dialog = $('dialog')[0];
     if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
 
-    dialog.querySelector('.close').addEventListener('click', function () {
+    $('dialog .close').click( () => {
         dialog.close();
     });
 
-    dialog.querySelector('.aceptar').addEventListener('click', function () {
+    $('dialog .aceptar').click( () => {
         listaProductos = []
         renderLista()
 
@@ -176,18 +169,24 @@ function initDialog() {
     });
 }
 
+function testCache() {
+
+}
+
 function start() {
     // console.log(document.querySelector('title').textContent)
-
+    // console.log($('title').text())
     registrarServiceWorker()
     configurarListeners()
     initDialog()
     renderLista()
+    testCache()
 }
 
 
 /*------------------------------------*/
 /*            EJECUCIÓN               */
 /*------------------------------------*/
-window.onload = start
 
+// window.onload = start
+$(document).ready(start)
